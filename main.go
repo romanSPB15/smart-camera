@@ -71,13 +71,11 @@ func differenceScore(c1, c2 color.Color) int64 {
 		(int64(r2) + int64(g2) + int64(b2) + int64(a2)))
 }
 
-// drawCross – цветной крест фиксированного размера
 func drawCross(img *image.RGBA, centerX, centerY int, clr color.Color) {
 	const armLen = 35
 	const thick = 3
 	bounds := img.Bounds()
 
-	// горизонтальная линия
 	for dx := -armLen; dx <= armLen; dx++ {
 		x := centerX + dx
 		if x < bounds.Min.X || x >= bounds.Max.X {
@@ -90,7 +88,6 @@ func drawCross(img *image.RGBA, centerX, centerY int, clr color.Color) {
 			}
 		}
 	}
-	// вертикальная линия
 	for dy := -armLen; dy <= armLen; dy++ {
 		y := centerY + dy
 		if y < bounds.Min.Y || y >= bounds.Max.Y {
@@ -105,7 +102,6 @@ func drawCross(img *image.RGBA, centerX, centerY int, clr color.Color) {
 	}
 }
 
-// smoothedPosition – экспоненциальное сглаживание
 type smoothedPosition struct {
 	x, y  float64
 	first bool
@@ -119,8 +115,7 @@ func (sp *smoothedPosition) update(rawX, rawY int, smoothness float64) (int, int
 		sp.x, sp.y = float64(rawX), float64(rawY)
 		sp.first = true
 	} else {
-		// smoothness=0 → новые координаты без задержки
-		// smoothness=1 → позиция практически не меняется
+
 		sp.x = smoothness*sp.x + (1-smoothness)*float64(rawX)
 		sp.y = smoothness*sp.y + (1-smoothness)*float64(rawY)
 	}
@@ -129,7 +124,6 @@ func (sp *smoothedPosition) update(rawX, rawY int, smoothness float64) (int, int
 
 const blur = 0.6
 
-// detectMotionAndDraw – детекция движения + отрисовка креста
 func detectMotionAndDraw(frame image.Image, prevFrame image.Image, cfg *motionConfig, smoother *smoothedPosition) (*image.RGBA, int, int64) {
 	bounds := frame.Bounds()
 	out := image.NewRGBA(bounds)
@@ -153,17 +147,6 @@ func detectMotionAndDraw(frame image.Image, prevFrame image.Image, cfg *motionCo
 			}
 		}
 	}
-
-	// var clr color.Color
-
-	// averageDiff := totalDiff / int64(640*480)
-	// if averageDiff > 16000 {
-	// 	clr = color.RGBA{255, 0, 0, 255}
-	// } else if averageDiff > 8000 {
-	// 	clr = color.RGBA{255, 100, 0, 255}
-	// } else {
-	// 	clr = color.RGBA{255, 255, 0, 255}
-	// }
 
 	if len(points) > 0 {
 		var sumX, sumY int64
@@ -245,10 +228,6 @@ func main() {
 
 				if i%4 == 0 {
 					fyne.Do(func() {
-						// Пороги для totalDiff подбираются экспериментально под ваше разрешение 640x480
-						// Например, для 640x480 максимальная сумма разниц (если все пиксели изменились на 65535*4) ~ 640*480*4*65535 = очень много.
-						// Но типичные значения при движении будут в диапазоне, например, 1e9 - 5e9.
-						// Проще использовать среднюю разницу: averageDiff = totalDiff / (640*480)
 						averageDiff := totalDiff / int64(640*480)
 						if averageDiff > 12000 {
 							numOfPixLabel.SetText("Быстро")
@@ -280,7 +259,6 @@ func main() {
 	videoCanvas := canvas.NewImageFromImage(<-frameCh)
 	videoCanvas.FillMode = canvas.ImageFillContain
 
-	// Чувствительность
 	sensitivitySlider := widget.NewSlider(0, 50000)
 	sensitivitySlider.SetValue(float64(cfg.getSensitivity()))
 	sensitivitySlider.Step = 100
@@ -291,7 +269,6 @@ func main() {
 		sensitivityLabel.SetText("Чувствительность: " + formatInt(val))
 	}
 
-	// Сглаживание (теперь 0 = резко, 100% = плавно)
 	smoothingSlider := widget.NewSlider(0, 1)
 	go smoothingSlider.SetValue(cfg.getSmoothingFactor())
 	smoothingSlider.Step = 0.01

@@ -11,7 +11,7 @@ FILESUBTYPE     0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "041904B0" // US English, Unicode
+        BLOCK "041904B0" // Russian, Unicode
         BEGIN
             VALUE "CompanyName", "RomanSPB15"
             VALUE "FileDescription", "Умная камера"
