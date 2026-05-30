@@ -1,0 +1,30 @@
+#include "winver.h"
+
+1 VERSIONINFO
+FILEVERSION     1,0,0,1
+PRODUCTVERSION  1,0,0
+FILEFLAGSMASK   0x3fL
+FILEFLAGS       0x0L
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041904B0" // US English, Unicode
+        BEGIN
+            VALUE "CompanyName", "RomanSPB15"
+            VALUE "FileDescription", "Умная камера"
+            VALUE "InternalName", "smart-camera"
+            VALUE "OriginalFilename", "smart-camera.exe"
+            VALUE "ProductName", "Умная камера"
+            VALUE "ProductVersion", "1.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 0x4B0
+    END
+END
+
+IDI_ICON1 ICON "icon.ico"
